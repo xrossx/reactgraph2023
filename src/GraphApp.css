@@ -1,11 +1,5 @@
-.input_table {
-    width: 100%;
-    box-sizing: border-box;
-    margin: 0;
-}
-td {
-    border: 1px solid black;
-    width: 25px;
-    padding: 0;
-    margin: 0;
+
+td.Spreadsheet__cell, th.Spreadsheet__header {
+    min-width: 2em;
+    width: 10px;
 }

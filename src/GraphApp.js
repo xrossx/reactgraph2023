@@ -61,7 +61,7 @@ export default function GraphApp({ date, data }) {
 
     return (
         <div>
-            {month_letter(data)}
+            <h2>{month_letter(data)}</h2>
             < Spreadsheet data = {data_state} onChange={handleChange} />
         </div>
     )
