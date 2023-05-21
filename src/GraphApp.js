@@ -1,78 +1,68 @@
 import React, { useState } from "react";
 import './GraphApp.css'
+import { Spreadsheet } from "react-spreadsheet";
 
 
-function GraphApp({ date, data }) {
+export default function GraphApp({ date, data }) {
 
-    const [state_graph, setStateGraph] = useState(graph(data, date));
-    // const [days, setDays] = useState(days_in_month)
+    console.log(data)
 
-    function days(date) {
+    function month_letter(data) { // месяц русскими буквами из даты
+        return date.toLocaleString('ru', { month: 'long' })
+    } 
+
+    function days_in_month(month) { // количество дней в месяце
+        return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate();
+    }
+
+    const daym = days_in_month(date)
+
+    function days_list(date) {  // массив из объектов дней месяца {value: день}
         const days = []
-        for (let i = 1; i < days_in_month(date.getMonth()) + 1; i++) {
-            days.push(i);
+        for (let i = 1; i < daym + 1; i++) {
+            days.push({value: i});
         }
         return days;
     }
 
-    function graph(data, date) {
-
-        const gr = data.graphs.split(',');
-        const full_graph = days(date).map((item, i) => {
-            if (gr[i]) {
-                item = gr[i]
-            } else {
-                item = ''
-            }
-    })
-        console.log(gr[20])
-        // setStateGraph(full_graph);
-        return gr
-    }
     
-    graph(data, date);
 
+    function graph(data) { // массив из часов работы 
 
-    let month_letter = date.toLocaleString('ru', { month: 'long' })
+        const gr = data.graphs.split(','); // массив из строки
+        const graph = []
+        for (let i=0; i< daym +1; i++){
+            graph.push({value: gr[i]})
+        }
 
-    function days_in_month(month) {
-        return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate();
+        return graph
     }
 
+    const start_data = [
+        days_list(date),
+        graph(data)
+    ]
 
+    const [data_state, setData] = useState(start_data);
 
-    function handleChange(index, value) {
-        const nextgraph = state_graph.map((v, i) => {
-            if (i === index) {
-                return value
-            }
-            else return v
-        })
-        setStateGraph(nextgraph);
+    function handleChange(data_state) {
+
+        while (data_state[1].length>daym) {
+            data_state[1].pop()
+        }
+
+        const newdata = [
+            days_list(date),
+            data_state[1]        
+        ]
+        setData(newdata);
     }
 
 
     return (
         <div>
-            <table>
-                <caption><h2>{month_letter}</h2></caption>
-                <tr>
-                    {days(date).map((v, i) => (
-                        <td>{v}</td>
-                    ))}
-                </tr>
-                <tr>
-                    {state_graph.map((val, i) => (
-                        <td><input className="input_table" key={i} value={val} onChange={(e) => handleChange(i, e.target.value)} /></td>
-
-                    )
-
-                    )}
-
-                </tr>
-            </table>
+            {month_letter(data)}
+            < Spreadsheet data = {data_state} onChange={handleChange} />
         </div>
     )
 }
-
-export default GraphApp;
